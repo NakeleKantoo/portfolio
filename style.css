@@ -55,7 +55,7 @@ p {
     margin-right: 5px;
     float: right;
     border-radius: 5px;
-    object-fit: cover;
+    object-fit:scale-down;
     transition: transform 0.5s ease-in-out;
 }
 
