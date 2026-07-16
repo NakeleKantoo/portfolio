@@ -16,7 +16,7 @@ export default function App() {
         <div className="flex gap-4 text-sm font-mono">
           <Link href="/curriculum.pdf" text="Curriculum" />
           <Link href="https://github.com/NakeleKantoo" text="Github" />
-          <Link href="https://www.linkedin.com/in/leonna-tom%C3%A1s-viegas-60a9ba295/" text="LinkedIn" />
+          <Link href="https://www.linkedin.com/in/leonna-viegas/" text="LinkedIn" />
           <Link href="mailto:profissional@leonnaviegas.dev.br" text="Email" />
         </div>
       </header>
