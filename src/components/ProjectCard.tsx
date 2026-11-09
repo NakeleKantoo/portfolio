@@ -1,6 +1,17 @@
-import { Project } from "../shared/Project"
+import type { Project } from "../shared/Project"
+import type { Lang } from "../shared/i18n"
 
-export const ProjectCard = ({ project, index }: { project: Project; index: number }) => {
+export const ProjectCard = ({
+    project,
+    index,
+    lang,
+    newTab,
+}: {
+    project: Project
+    index: number
+    lang: Lang
+    newTab: string
+}) => {
     return (
         <article className="clip">
             <div className="clip-head">
@@ -8,21 +19,21 @@ export const ProjectCard = ({ project, index }: { project: Project; index: numbe
                 <span className="clip-num">Nº {String(index + 1).padStart(2, '0')}</span>
             </div>
 
-            <p className="clip-tagline">{project.tagline}</p>
-            <p className="clip-text">{project.description}</p>
+            <p className="clip-tagline">{project.tagline[lang]}</p>
+            <p className="clip-text">{project.description[lang]}</p>
 
-            <ul className="clip-tags" aria-label={`tecnologias de ${project.title}`}>
+            <ul className="clip-tags" aria-label={`${project.title} — tags`}>
                 {project.tags.map((tag) => (
                     <li key={tag}>{tag}</li>
                 ))}
             </ul>
 
-            <ul className="clip-links" aria-label={`links de ${project.title}`}>
+            <ul className="clip-links" aria-label={`${project.title} — links`}>
                 {project.links.map((link) => (
                     <li key={link.href}>
                         <a href={link.href} target="_blank" rel="noreferrer">
-                            {link.label} <span aria-hidden="true">↗</span>
-                            <span className="sr-only"> (abre em nova aba)</span>
+                            {link.label[lang]} <span aria-hidden="true">↗</span>
+                            <span className="sr-only">{newTab}</span>
                         </a>
                     </li>
                 ))}

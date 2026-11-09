@@ -1,13 +1,14 @@
+type Localized = { pt: string; en: string };
+
 export type ProjectLink = {
-    label: string;
+    label: Localized;
     href: string;
 }
 
 export type Project = {
-    icon: string;
     title: string;
-    tagline: string;
-    description: string;
+    tagline: Localized;
+    description: Localized;
     tags: string[];
     links: ProjectLink[];
 }

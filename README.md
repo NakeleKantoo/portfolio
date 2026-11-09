@@ -1,91 +1,54 @@
 # leonna.os
 
-Portfólio da Leonna Tomás Viegas em duas caras: **o tubo** e **o papel**.
-
-- **o tubo** (`/`): uma sala em ASCII art dentro de um monitor de CRT, com shader de verdade
-  (WebGL), sequência de boot, blips de som sintetizados e objetos interativos.
-- **o papel** (`/#texto`): o mesmo conteúdo impresso — tipografia de zine, grão de papel,
-  carimbo, fita adesiva nas bordas e colofão. Sem jogo, sem canvas, tudo em DOM.
-
-## Como jogar
-
-| tecla | ação |
-| --- | --- |
-| `WASD` / setas | andar pela sala |
-| `E` / `Enter` | abrir o objeto que estiver ao lado |
-| clique | abrir o objeto clicado |
-| `T` | modo texto (site normal, com todos os links) |
-| `M` | liga/desliga o som |
-| `Esc` | fechar o painel |
-
-Em telas pequenas a sala vira um **menu de terminal** (a grade de 80 colunas fica ilegível
-no celular).
-
-## A sala
-
-| objeto | o que é |
-| --- | --- |
-| TUCANO (centro) | linguagem de programação: site, playground, docs e o post "Making a Language" |
-| MANILHA | jogo de cartas com servidor autoritativo |
-| ECONOMIAS | backend pessoal escrito em Lua, sem framework |
-| APRENDA | plataforma gamificada de ensino |
-| CV | o currículo em PDF, renderizado **dentro** da tela (e link para o original) |
-| GITHUB / BLOG | cartazes na parede |
-| SOM | a rádio: liga/desliga os blips |
-| MODO TEXTO | a porta de saída para a versão sem jogo |
-
-## Stack
-
-- React + TypeScript + Vite
-- Tailwind CSS v4 (só no DOM; a sala é desenhada em canvas)
-- Fontes self-hosted (woff2, OFL) só para o modo texto: Instrument Serif, Instrument Sans,
-  JetBrains Mono e Caveat — ver `public/fonts/LICENSE.txt` e `scripts/fetch-fonts.py`
-- WebGL puro para o shader CRT: curvatura de tubo, scanlines, bloom, vinheta, flicker e power-on
-- **Monocromático**: o canvas carrega apenas luminância; a cor vem do fósforo escolhido
-  (âmbar, verde, branco ou vermelho), aplicado no shader (`uTint`) e no CSS (`--phosphor`)
-- Áudio 100% sintetizado com WebAudio (osciladores + envelope), nenhum arquivo
-- Zero imagem no cenário: tudo é texto numa grade 80×30
+Portfólio da Leonna Tomás Viegas — um **impresso** em forma de site: papel, tinta, carimbo e
+tipografia de zine. Sem jogo, sem canvas, sem uma única imagem no layout. Bilíngue (pt/en).
 
 ## Estrutura
 
 ```
 src/
-  game/
-    screen.ts     grade de caracteres → canvas 960×720 (4:3)
-    crt.ts        shader CRT + tint do fósforo + fallback 2D
-    world.ts      sala, objetos, colisão e hit-test do clique
-    boot.ts       texto da sequência de boot
-    audio.ts      blips (passo, abrir, fechar, negar, boot)
-    palette.ts    luminâncias + cores de fósforo
   components/
-    GameView.tsx    boot, movimento, interação, loop de render, som e fósforo
-    MenuScreen.tsx  versão em lista para mobile
-    ProjectPanel.tsx painel do objeto (inclusive o leitor de PDF)
-    TextMode.tsx    o impresso: zine em papel, acessível e indexável
+    Page.tsx        a folha: cabeçalho, sobre, projetos, colofão
     ProjectCard.tsx recorte de jornal com fita adesiva e numeração
+  shared/
+    i18n.ts         todo o texto do site, em pt e en
+    Projects.ts     os três projetos, com tagline/descrição nos dois idiomas
+    profile.ts      data de nascimento e idade calculada na hora
+  index.css         papel, grão, perfuração, recortes e colofão
+  fonts.css         gerado por scripts/fetch-fonts.py
+public/
+  fonts/            Instrument Serif/Sans, JetBrains Mono, Caveat (OFL)
+  curriculum.pdf
+  og.png            cartão social 1200x630 no mesmo papel
 ```
 
-## Rotas
+## Idioma
 
-- `/` — o jogo
-- `/#texto` — o impresso (modo texto)
-- `/?gl=0` — força o fallback 2D (sem shader), útil para depurar
+- `pt` por padrão, `en` na troca do cabeçalho (ou tecla `l`)
+- a escolha fica em `localStorage` (`leonna.idioma`)
+- `?lang=en` força o idioma sem gravar preferência
+- trocar o idioma atualiza `<html lang>`, `<title>` e a meta description
 
-## Acessibilidade
+## Idade
 
-- link "pular o jogo" no primeiro Tab
-- `prefers-reduced-motion` pula o boot animado e desliga flicker/rolagem do CRT
-- todo o conteúdo existe em DOM no modo texto, com links reais
-- som desligado por preferência fica desligado (localStorage)
+`src/shared/profile.ts` guarda `BIRTH = { year, month, day }` e `getAge()` compara a data de
+hoje com ela, então o número se corrige sozinho no aniversário — aparece na nota da margem e
+na assinatura do rodapé.
 
 ## Fontes
 
 ```bash
-python3 scripts/fetch-fonts.py   # baixa os woff2 e regera src/fonts.css
+python3 scripts/fetch-fonts.py   # baixa os woff2 (subset latin) e regera src/fonts.css
 ```
 
-As fontes só são baixadas pelo navegador quando o modo texto aparece — o jogo não usa
-nenhuma delas.
+Todas são SIL Open Font License 1.1 — ver `public/fonts/LICENSE.txt`.
+
+## Acessibilidade
+
+- skip-link no primeiro Tab, `main`, `nav` e `footer` com rótulos
+- contraste de tinta sobre papel acima de 7:1
+- `prefers-reduced-motion` para a fita do topo e as inclinações
+- `@media print` deixa a folha imprimível de verdade
 
 ## Rodando
 

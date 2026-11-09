@@ -1,44 +1,37 @@
 import { useEffect, useState } from 'react';
-import { GameView } from './components/GameView';
-import { TextMode } from './components/TextMode';
+import { Page } from './components/Page';
+import { copy, type Lang } from './shared/i18n';
 
-type Mode = 'game' | 'text';
+const LANG_KEY = 'leonna.idioma';
 
-function initialMode(): Mode {
-  if (typeof window === 'undefined') return 'game';
-  return window.location.hash === '#texto' ? 'text' : 'game';
+function initialLang(): Lang {
+  if (typeof window === 'undefined') return 'pt';
+  const fromUrl = new URLSearchParams(window.location.search).get('lang');
+  if (fromUrl === 'en' || fromUrl === 'pt') return fromUrl;
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'en' || saved === 'pt') return saved;
+  } catch {
+    /* sem storage */
+  }
+  return 'pt';
 }
 
 export default function App() {
-  const [mode, setMode] = useState<Mode>(initialMode);
+  const [lang, setLang] = useState<Lang>(initialLang);
 
-  // o jogo é escuro, o modo texto é papel: acompanha a barra do navegador
   useEffect(() => {
-    const paper = mode === 'text';
-    const color = paper ? '#efe7d5' : '#0d0c0b';
-    document.documentElement.style.backgroundColor = color;
-    document.documentElement.style.colorScheme = paper ? 'light' : 'dark';
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', color);
-  }, [mode]);
+    const t = copy[lang];
+    document.documentElement.lang = t.htmlLang;
+    document.title = t.title;
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute('content', t.description);
+    try {
+      localStorage.setItem(LANG_KEY, lang);
+    } catch {
+      /* sem storage */
+    }
+  }, [lang]);
 
-  if (mode === 'text') {
-    return (
-      <TextMode
-        onGame={() => {
-          setMode('game');
-          history.replaceState(null, '', window.location.pathname);
-        }}
-      />
-    );
-  }
-
-  return (
-    <GameView
-      onTextMode={() => {
-        setMode('text');
-        window.location.hash = 'texto';
-      }}
-    />
-  );
+  return <Page lang={lang} onLang={setLang} />;
 }
