@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GameView } from './components/GameView';
 import { TextMode } from './components/TextMode';
 
@@ -11,6 +11,16 @@ function initialMode(): Mode {
 
 export default function App() {
   const [mode, setMode] = useState<Mode>(initialMode);
+
+  // o jogo é escuro, o modo texto é papel: acompanha a barra do navegador
+  useEffect(() => {
+    const paper = mode === 'text';
+    const color = paper ? '#efe7d5' : '#0d0c0b';
+    document.documentElement.style.backgroundColor = color;
+    document.documentElement.style.colorScheme = paper ? 'light' : 'dark';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', color);
+  }, [mode]);
 
   if (mode === 'text') {
     return (

@@ -1,8 +1,11 @@
 # leonna.os
 
-Portfólio da Leonna Tomás Viegas em forma de **terminal jogável**: uma sala em ASCII art
-dentro de um monitor de CRT, com shader de verdade (WebGL), sequência de boot, blips de som
-sintetizados e um modo texto para quem só quer ler.
+Portfólio da Leonna Tomás Viegas em duas caras: **o tubo** e **o papel**.
+
+- **o tubo** (`/`): uma sala em ASCII art dentro de um monitor de CRT, com shader de verdade
+  (WebGL), sequência de boot, blips de som sintetizados e objetos interativos.
+- **o papel** (`/#texto`): o mesmo conteúdo impresso — tipografia de zine, grão de papel,
+  carimbo, fita adesiva nas bordas e colofão. Sem jogo, sem canvas, tudo em DOM.
 
 ## Como jogar
 
@@ -35,6 +38,8 @@ no celular).
 
 - React + TypeScript + Vite
 - Tailwind CSS v4 (só no DOM; a sala é desenhada em canvas)
+- Fontes self-hosted (woff2, OFL) só para o modo texto: Instrument Serif, Instrument Sans,
+  JetBrains Mono e Caveat — ver `public/fonts/LICENSE.txt` e `scripts/fetch-fonts.py`
 - WebGL puro para o shader CRT: curvatura de tubo, scanlines, bloom, vinheta, flicker e power-on
 - **Monocromático**: o canvas carrega apenas luminância; a cor vem do fósforo escolhido
   (âmbar, verde, branco ou vermelho), aplicado no shader (`uTint`) e no CSS (`--phosphor`)
@@ -56,13 +61,14 @@ src/
     GameView.tsx    boot, movimento, interação, loop de render, som e fósforo
     MenuScreen.tsx  versão em lista para mobile
     ProjectPanel.tsx painel do objeto (inclusive o leitor de PDF)
-    TextMode.tsx    site em HTML normal (acessível, indexável)
+    TextMode.tsx    o impresso: zine em papel, acessível e indexável
+    ProjectCard.tsx recorte de jornal com fita adesiva e numeração
 ```
 
 ## Rotas
 
 - `/` — o jogo
-- `/#texto` — modo texto direto
+- `/#texto` — o impresso (modo texto)
 - `/?gl=0` — força o fallback 2D (sem shader), útil para depurar
 
 ## Acessibilidade
@@ -71,6 +77,15 @@ src/
 - `prefers-reduced-motion` pula o boot animado e desliga flicker/rolagem do CRT
 - todo o conteúdo existe em DOM no modo texto, com links reais
 - som desligado por preferência fica desligado (localStorage)
+
+## Fontes
+
+```bash
+python3 scripts/fetch-fonts.py   # baixa os woff2 e regera src/fonts.css
+```
+
+As fontes só são baixadas pelo navegador quando o modo texto aparece — o jogo não usa
+nenhuma delas.
 
 ## Rodando
 

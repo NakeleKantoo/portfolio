@@ -1,0 +1,9 @@
+Fontes usadas no modo texto (todas SIL Open Font License 1.1):
+
+  Instrument Serif  — (c) Instrument, OFL-1.1
+  Instrument Sans   — (c) Instrument, OFL-1.1
+  JetBrains Mono    — (c) JetBrains, OFL-1.1
+  Caveat            — (c) Pablo Impallari, OFL-1.1
+
+Texto da licença: https://openfontlicense.org
+Baixadas via Google Fonts com scripts/fetch-fonts.py (subset latin).
