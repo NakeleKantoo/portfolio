@@ -1,130 +1,400 @@
 @import "tailwindcss";
 
+/* ============================================================
+   leonna.os — fósforo monocromático
+   A tela (canvas) é luminância pura; o DOM usa --phosphor.
+   ============================================================ */
+
 :root {
+  --phosphor: #ffb000;
+  --accent: var(--phosphor);
+  --accent-border: color-mix(in srgb, var(--phosphor) 45%, transparent);
+  --accent-bg: color-mix(in srgb, var(--phosphor) 9%, transparent);
+
   --text: #ededed;
   --text-h: #ffffff;
-  --bg: #111111;
-  --border: #242424;
-  --code-bg: #1c1515;
-  --accent: #ff3b3b;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(255, 59, 59, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(59, 59, 59, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --text-dim: #8a857a;
+  --bg: #0d0c0b;
+  --border: #242220;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --mono: ui-monospace, 'DejaVu Sans Mono', 'Fira Code', Consolas, monospace;
 
+  color-scheme: dark;
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
+@media (max-width: 1024px) {
   :root {
-    --text: #ededed;
-    --text-h: #ffffff;
-    --bg: #111111;
-    --border: #242424;
-    --code-bg: #1c1515;
-    --accent: #ff3b3b;
-    --accent-bg: rgba(170, 59, 255, 0.1);
-    --accent-border: rgba(255, 59, 59, 0.5);
-    --social-bg: rgba(244, 243, 236, 0.5);
-    --shadow:
-      rgba(59, 59, 59, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-    --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-    --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-    --mono: ui-monospace, Consolas, monospace;
-
-    font: 18px/145% var(--sans);
-    letter-spacing: 0.18px;
-    color-scheme: light dark;
-    color: var(--text);
-    background: var(--bg);
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+    font-size: 16px;
   }
 }
 
 body {
   margin: 0;
+  min-height: 100svh;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   gabinete + tela
+   ============================================================ */
+
+.monitor {
+  width: 100%;
+  max-width: min(880px, calc((100svh - 190px) * 1.334));
+  padding: 14px 14px 8px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #2b2825 0%, #1b1917 55%, #232019 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.6),
+    0 30px 60px -30px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(0, 0, 0, 0.65);
+}
+
+.screen {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.9),
+    0 0 0 2px #0a0a0a;
+}
+
+.screen[data-compact='true'] {
+  /* no mobile a lista define a altura do tubo */
+  aspect-ratio: auto;
+}
+
+.screen[data-compact='true'] .menu-screen {
+  position: relative;
+  inset: auto;
+  background: transparent;
+}
+
+.screen canvas.display {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* scanlines: reforçadas no modo 2D, que não tem shader */
+.crt-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.10) 0px,
+    rgba(0, 0, 0, 0.10) 1px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0) 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+.crt-overlay[data-kind='2d'] {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.34) 0px,
+    rgba(0, 0, 0, 0.34) 1px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0) 3px
+  );
+}
+
+.screen-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 31;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 70% at 50% -12%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 55%),
+    radial-gradient(100% 100% at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.bezel-plate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 4px 2px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6f6a62;
+}
+
+.led {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #4a3a10;
+  box-shadow: 0 0 6px rgba(255, 176, 0, 0.35);
+  transition: background 300ms, box-shadow 300ms;
+}
+
+.led[data-phase='play'] {
+  background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--phosphor) 80%, transparent);
+}
+
+.plate-buttons {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+}
+
+.plate-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a8272;
+  transition: color 200ms;
+}
+
+.plate-btn:hover {
+  color: var(--accent);
+}
+
+/* ============================================================
+   painel de projeto
+   ============================================================ */
+
+.panel {
+  position: absolute;
+  inset: 6% 7%;
+  z-index: 20;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-
-p {
-  margin: 0;
-}
-
-code,
-.counter {
+  overflow: hidden;
+  border: 1px solid var(--accent-border);
+  border-radius: 3px;
+  background: rgba(6, 6, 5, 0.985);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.85),
+    0 0 34px color-mix(in srgb, var(--phosphor) 10%, transparent);
   font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+  font-size: clamp(10px, 1.05vw + 6px, 13px);
+  line-height: 1.5;
+  color: var(--text);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.panel-doc {
+  inset: 3% 3.5%;
+}
+
+.panel-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.92em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.panel-close {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.panel-close:hover {
+  color: var(--accent);
+}
+
+.panel-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  color: var(--accent);
+}
+
+.panel-body {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px 14px;
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
+}
+
+.panel-doc .panel-body {
+  padding: 10px;
+}
+
+.panel-tagline {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 0.86em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.panel-text {
+  margin: 0 0 12px;
+}
+
+.panel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  color: var(--text-dim);
+  font-size: 0.9em;
+}
+
+.panel-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-links-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.panel-links a,
+.panel-link-button {
+  font-family: var(--mono);
+  font-size: 1em;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.panel-links a:hover,
+.panel-link-button:hover {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.panel-doc-frame {
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 10px;
+  border: 1px solid var(--accent-border);
+  background: #fff;
+}
+
+.panel-doc-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  /* o pdf entra em modo fósforo: fundo escuro, tinta âmbar */
+  filter: invert(1) hue-rotate(180deg) sepia(0.75) saturate(1.5) brightness(0.5) contrast(1.15);
+}
+
+/* ============================================================
+   menu (mobile)
+   ============================================================ */
+
+.menu-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  overflow-y: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  background: #0a0a09;
+}
+
+.menu-screen ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-cmd {
+  margin: 0;
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.menu-dim {
+  color: var(--text-dim);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--accent-border);
+  border-radius: 3px;
+  background: var(--accent-bg);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-align: left;
+}
+
+.menu-item:hover,
+.menu-item[aria-current='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.menu-index {
+  color: var(--text-dim);
+  font-size: 10px;
+}
+
+.menu-label {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .panel {
+    inset: 4% 4%;
+    font-size: 11px;
+  }
+
+  .panel-doc {
+    inset: 2% 2%;
+  }
 }

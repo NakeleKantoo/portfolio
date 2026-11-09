@@ -4,22 +4,34 @@ export const projects = [
   {
     icon: '/tucano.png',
     title: "Tucano",
-    description: "A programming language made for teaching Brazilian High School Students algorithms and problem-solving, written in Typescript it features a web playground for the students to learn while building awesome projects.",
-    tags: ["React", "Compilers", "TypeScript", "Vite.js"],
-    url: 'https://linguagemtucano.com.br'
+    tagline: "A programming language in Portuguese, from interpreter to classroom",
+    description: "A programming language built to teach algorithms to Brazilian high school students: a TypeScript interpreter with its own lexer, parser and AST runtime, a browser playground, full documentation and a gamified learning platform around it.",
+    tags: ["TypeScript", "Compilers", "Deno", "React", "Astro"],
+    links: [
+      { label: "Site", href: "https://linguagemtucano.com.br" },
+      { label: "Playground", href: "https://play.linguagemtucano.com.br" },
+      { label: "Docs", href: "https://docs.linguagemtucano.com.br" },
+      { label: "Making a Language", href: "https://leonnaviegas.dev.br/posts/making-a-language/" }
+    ]
   },
   {
-    icon: '/quanto.png',
-    title: "Quanto",
-    description: "A financial application designed to automate the tedious task of filling out details of your supermarket trips into a spreadsheet, it scans your receipt and automatically inserts it into a database, it can also show you spending statistics.",
-    tags: ["React Native", "Node.js", "SQLite3", "Express.js"],
-    url: 'https://github.com/NakeleKantoo/ReceiptReader'
+    icon: '/manilha.svg',
+    title: "Manilha",
+    tagline: "Multiplayer card game with an authoritative server",
+    description: "Online card game for 2 to 6 players: an authoritative Node.js server with WebSocket rooms, bots, reconnection and spectators, a pure rules engine with seeded RNG shared by server and client, a Zod-validated protocol, and a Svelte 5 + Canvas 2D client that draws every card procedurally — no sprite assets.",
+    tags: ["TypeScript", "Fastify", "WebSocket", "Svelte 5", "Zod"],
+    links: [
+      { label: "Source", href: "https://github.com/ALGAS-Jogos/FilhoDaPuta" }
+    ]
   },
   {
-    icon: '/hajapaciencia.png',
-    title: "Haja Paciencia",
-    description: "A Solitaire game implementation focused on simple gameplay.",
-    tags: ["LÖVE2D", "Lua", "Android", "Gradle"],
-    url: 'https://github.com/ALGAS-Jogos/HajaPaciencia'
+    icon: '/economias.svg',
+    title: "Economias",
+    tagline: "Self-hosted finance backend written in Lua, no framework",
+    description: "Expense tracker whose backend I wrote from scratch: HTTP routing, JSON encoding, bcrypt session auth and MySQL persistence on top of my own Lua HTTP server, with a vanilla JavaScript front end consuming the API.",
+    tags: ["Lua", "MySQL", "bcrypt", "Vanilla JS"],
+    links: [
+      { label: "Source", href: "https://github.com/NakeleKantoo/Economias" }
+    ]
   }
-] as Project[];
+] satisfies Project[];
